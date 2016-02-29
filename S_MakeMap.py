@@ -5,6 +5,7 @@ class MapGen:
 
     def __init__(self):
         self.roomsize = (3, 9)
+        self.roomoffset = (3, 7)
         self.hallsize = (1, 3)
 
     def create(self):
@@ -22,8 +23,11 @@ class MapGen:
                                        self.roomsize[1])
                 height = random.randint(self.roomsize[0],
                                         self.roomsize[1])
+                offset = random.randint(self.roomoffset[0],
+                                        self.roomoffset[1])
                 while rdirlst:
                     direction = rdirlst.pop()
+                    if _check_dir(offset, width, height)
 
 
 class _room:
