@@ -22,6 +22,7 @@ class MapGen:
         self._process_ring(ring, 0)
 
     def _process_ring(self, ring, depth):
+        print('starting depth ' + str(depth))
         newring = []
         while ring:
             for room in ring:
