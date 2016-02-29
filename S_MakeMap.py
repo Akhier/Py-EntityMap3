@@ -30,7 +30,7 @@ class MapGen:
                                         self.roomoffset[1])
                 while rdirlst:
                     direction = rdirlst.pop()
-                    if self._check_dir(direction, offset, width, height):
+                    if self._check_dir(direction, offset, width, height, room):
 
     def _set_used_tiles(self, room):
         for y in range(room.H):
@@ -39,20 +39,17 @@ class MapGen:
                 tiley = y - int(room.H / 2) + room.Y
                 self.usedtiles.append((tilex, tiley))
 
-    def _check_dir(self, direction, offset, width, height):
-        offx = 0
-        offy = 0
+    def _check_dir(self, direction, offset, width, height, room):
         if direction == 'N':
-            offy = -1 * offset
+            offy = -1 * (offset + int(height / 2) + int(room.H / 2))
         elif direction == 'S':
-            offy = offset
+            offy = offset + int(height / 2) + int(room.H / 2)
         elif direction == 'E':
-            offx = offset
+            offx = offset + int(width / 2) + int(room.W / 2)
         elif direction == 'W':
-            offx = offset
+            offx = -1 * (offset + int(width / 2) + int(room.W / 2))
         for y in range(height):
             for x in range(width):
-
 
 
 class _room:
