@@ -1,3 +1,4 @@
+from C_Map import Map
 import random
 import math
 
@@ -12,7 +13,8 @@ class MapGen:
         self.usedtiles = []
         self.rooms = []
 
-    def create(self):
+    def create(self, seed):
+        random.seed(seed)
         self.usedtiles = []
         self.rooms = []
         centerroom = _room(3, 5, 5, (0, 0))
@@ -20,6 +22,22 @@ class MapGen:
         self._set_used_tiles(centerroom)
         ring = [centerroom]
         self._process_ring(ring, 0)
+        NY = 0
+        SY = 0
+        EX = 0
+        WX = 0
+        for room in self.rooms:
+            if room.Y < NY:
+                NY = room.Y
+            if room.Y > SY:
+                SY = room.Y
+            if room.X > EX:
+                EX = room.X
+            if room.X < WX:
+                WX = room.X
+        (width, height) = math.hypot(EX - WX, SY - NY)
+        newmap = Map(width, height, seed)
+
 
     def _process_ring(self, ring, depth):
         print('starting depth ' + str(depth))
