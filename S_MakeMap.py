@@ -6,12 +6,16 @@ class MapGen:
     def __init__(self):
         self.roomsize = (3, 9)
         self.roomoffset = (3, 7)
+        self.roomcon = {1: 35, 2: 55, 3: 10}
         self.hallsize = (1, 3)
         self.usedtiles = []
+        self.rooms = []
 
     def create(self):
         self.usedtiles = []
+        self.rooms = []
         centerroom = _room(3, 5, 5, (0, 0))
+        self.rooms.append(centerroom)
         self._set_used_tiles(centerroom)
         ring = [centerroom]
         self._process_ring(ring)
@@ -28,6 +32,13 @@ class MapGen:
                                         self.roomsize[1])
                 offset = random.randint(self.roomoffset[0],
                                         self.roomoffset[1])
+                temp = random.randint(1, 100)
+                if temp <= self.roomcon[1]:
+                    ctm = 1
+                elif temp <= self.roomcon[2]:
+                    ctm = 2
+                else:
+                    ctm = 3
                 while rdirlst:
                     direction = rdirlst.pop()
                     no_intersection = True
@@ -44,9 +55,12 @@ class MapGen:
                         offx = -1 * (offset + int(width / 2) + int(room.W / 2))
                     for y in range(height):
                         for x in range(width):
-                            if (x + offx, y + offy) in self.usedtiles:
+                            center = (x + offx, y + offy)
+                            if center in self.usedtiles:
                                 no_intersection = False
                     if no_intersection:
+                        newroom = _room(ctm, width, height, center)
+                        self._set_used_tiles(newroom)
 
     def _set_used_tiles(self, room):
         for y in range(room.H):
