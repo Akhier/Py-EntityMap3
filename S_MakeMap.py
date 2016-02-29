@@ -1,3 +1,4 @@
+from C_Tile import Tile
 from C_Map import Map
 import random
 import math
@@ -37,7 +38,17 @@ class MapGen:
                 WX = room.X
         (width, height) = math.hypot(EX - WX, SY - NY)
         newmap = Map(width, height, seed)
-
+        tilearray = [[False for x in range(width)] for y in range(height)]
+        for y in range(height):
+            for x in range(width):
+                tilearray[x][y] = Tile(x, y, 'Stone Wall', '#', False, False)
+        for room in self.rooms:
+            for y in range(room.H):
+                for x in range(room.W):
+                    tilex = x - int(room.H / 2)
+                    tiley = y - int(room.Y / 2)
+                    tilearray[tilex][tiley] = Tile(x, y, 'Stone Floor',
+                                                   '.', True, True)
 
     def _process_ring(self, ring, depth):
         print('starting depth ' + str(depth))
