@@ -12,12 +12,16 @@ class MapGen:
         ring = [centerroom]
         self._process_ring(ring)
 
-    def _process_ring(ring):
+    def _process_ring(self, ring):
         newring = []
         while ring:
             for room in ring:
                 rdirlst = ['N', 'S', 'E', 'W']
                 random.shuffle(rdirlst)
+                width = random.randint(self.roomsize[0],
+                                       self.roomsize[1])
+                height = random.randint(self.roomsize[0],
+                                        self.roomsize[1])
 
 
 class _room:
