@@ -41,6 +41,8 @@ class MapGen:
             if room.X < WX:
                 WX = room.X
         (width, height) = math.hypot(EX - WX, SY - NY)
+        width = int(width)
+        height = int(height)
         newmap = Map(width, height, seed)
         tilearray = [[False for x in range(width)] for y in range(height)]
         for room in self.rooms:
@@ -106,6 +108,7 @@ class MapGen:
                     if no_intersection:
                         centerdist = math.hypot(center[0] - room.X,
                                                 center[1] - room.Y)
+                        centerdist = (int(centerdist[0]), int(centerdist[1]))
                         if direction == 'N' or direction == 'S':
                             hallC = (room.X, int((room.Y + center[1]) / 2))
                             newhall = _room(0, 1, centerdist[1], hallC)
