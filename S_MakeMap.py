@@ -19,9 +19,9 @@ class MapGen:
         self.rooms.append(centerroom)
         self._set_used_tiles(centerroom)
         ring = [centerroom]
-        self._process_ring(ring)
+        self._process_ring(ring, 0)
 
-    def _process_ring(self, ring):
+    def _process_ring(self, ring, depth):
         newring = []
         while ring:
             for room in ring:
@@ -68,11 +68,17 @@ class MapGen:
                         else:
                             hallC = (int((room.X + center[0]) / 2), room.Y)
                             newhall = _room(0, centerdist[0], 1, hallC)
+                        self.rooms.append(newhall)
                         room.connectionstomake -= 1
                         newroom = _room(ctm, width, height, center)
                         self._set_used_tiles(newroom)
                         self.rooms.append(newroom)
                         newring.append(newroom)
+                if room.connectionstomake <= 0:
+                    ring.remove(room)
+        if depth < 5:
+            depth += 1
+            self._process_ring(newring, depth)
 
     def _set_used_tiles(self, room):
         for y in range(room.H):
