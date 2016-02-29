@@ -8,9 +8,9 @@ class EntityManager:
 
     @classmethod
     def new_Id(self):
-        nId = uuid4()
-        Id.append(str(nId))
-        return str(nId)
+        nId = str(uuid4())
+        Id.append(nId)
+        return nId
 
     @classmethod
     def remove_Id(self, rId):
