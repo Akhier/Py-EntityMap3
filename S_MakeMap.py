@@ -1,3 +1,6 @@
+import random
+
+
 class MapGen:
 
     def __init__(self):
@@ -7,7 +10,14 @@ class MapGen:
     def create(self):
         centerroom = _room(3, 5, 5, (0, 0))
         ring = [centerroom]
-        process_ring(ring)
+        self._process_ring(ring)
+
+    def _process_ring(ring):
+        newring = []
+        while ring:
+            for room in ring:
+                rdirlst = ['N', 'S', 'E', 'W']
+                random.shuffle(rdirlst)
 
 
 class _room:
