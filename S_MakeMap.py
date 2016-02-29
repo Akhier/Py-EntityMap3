@@ -13,11 +13,13 @@ class MapGen:
         self.roomoffset = (3, 7)
         self.roomcon = {1: 35, 2: 55, 3: 10}
         self.hallsize = (1, 3)
+        self.maxdepth = 5
         self.usedtiles = []
         self.rooms = []
 
-    def create(self, seed):
+    def create(self, seed, maxdepth=5):
         random.seed(seed)
+        self.maxdepth = maxdepth
         self.usedtiles = []
         self.rooms = []
         centerroom = _room(3, 5, 5, (0, 0))
@@ -118,7 +120,7 @@ class MapGen:
                         newring.append(newroom)
                 if room.connectionstomake <= 0:
                     ring.remove(room)
-        if depth < 5:
+        if depth < self.maxdepth:
             depth += 1
             self._process_ring(newring, depth)
 
