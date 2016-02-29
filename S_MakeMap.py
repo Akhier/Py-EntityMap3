@@ -22,6 +22,8 @@ class MapGen:
                                        self.roomsize[1])
                 height = random.randint(self.roomsize[0],
                                         self.roomsize[1])
+                while rdirlst:
+                    direction = rdirlst.pop()
 
 
 class _room:
