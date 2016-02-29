@@ -1,4 +1,5 @@
 import random
+import math
 
 
 class MapGen:
@@ -59,8 +60,15 @@ class MapGen:
                             if center in self.usedtiles:
                                 no_intersection = False
                     if no_intersection:
+                        centerdist = math.hypot(center[0] - room.X,
+                                                center[1] - room.Y)
+                        if direction == 'N' or direction == 'S':
+                            newhall = _room(0, 1, centerdist[1])
+                        room.connectionstomake -= 1
                         newroom = _room(ctm, width, height, center)
                         self._set_used_tiles(newroom)
+                        self.rooms.append(newroom)
+                        newring.append(newroom)
 
     def _set_used_tiles(self, room):
         for y in range(room.H):
