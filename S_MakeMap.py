@@ -63,7 +63,11 @@ class MapGen:
                         centerdist = math.hypot(center[0] - room.X,
                                                 center[1] - room.Y)
                         if direction == 'N' or direction == 'S':
-                            newhall = _room(0, 1, centerdist[1])
+                            hallC = (room.X, int((room.Y + center[1]) / 2))
+                            newhall = _room(0, 1, centerdist[1], hallC)
+                        else:
+                            hallC = (int((room.X + center[0]) / 2), room.Y)
+                            newhall = _room(0, centerdist[0], 1, hallC)
                         room.connectionstomake -= 1
                         newroom = _room(ctm, width, height, center)
                         self._set_used_tiles(newroom)
