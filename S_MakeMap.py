@@ -6,6 +6,8 @@ class MapGen:
 
     def create(self):
         centerroom = _room(3, 5, 5, (0, 0))
+        ring = [centerroom]
+        process_ring(ring)
 
 
 class _room:
