@@ -1,3 +1,5 @@
+from ComponentManager import ComponentManager
+from EntityManager import EntityManager
 from C_Tile import Tile
 from C_Map import Map
 import random
@@ -39,9 +41,6 @@ class MapGen:
         (width, height) = math.hypot(EX - WX, SY - NY)
         newmap = Map(width, height, seed)
         tilearray = [[False for x in range(width)] for y in range(height)]
-        for y in range(height):
-            for x in range(width):
-                tilearray[x][y] = Tile(x, y, 'Stone Wall', '#', False, False)
         for room in self.rooms:
             for y in range(room.H):
                 for x in range(room.W):
@@ -49,6 +48,19 @@ class MapGen:
                     tiley = y - int(room.Y / 2)
                     tilearray[tilex][tiley] = Tile(x, y, 'Stone Floor',
                                                    '.', True, True)
+        for y in range(height):
+            for x in range(width):
+                if not tilearray[x][y]:
+                    tilearray[x][y] = Tile(x, y, 'Stone Wall',
+                                           '#', False, False)
+                newtileid = EntityManager.new_Id()
+                ComponentManager.add_Component(newtileid, 'Tile',
+                                               tilearray[x][y])
+                tilearray[x][y] = newtileid
+        newmap.TileIds = tilearray
+        newmapid = EntityManager.new_Id()
+        ComponentManager.add_Component(newmapid, 'Map', newmap)
+        return newmapid
 
     def _process_ring(self, ring, depth):
         print('starting depth ' + str(depth))
