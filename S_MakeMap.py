@@ -12,6 +12,7 @@ class MapGen:
     def create(self):
         self.usedtiles = []
         centerroom = _room(3, 5, 5, (0, 0))
+        self._set_used_tiles(centerroom)
         ring = [centerroom]
         self._process_ring(ring)
 
