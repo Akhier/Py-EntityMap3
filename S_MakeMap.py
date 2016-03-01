@@ -13,49 +13,35 @@ class MapGen:
         self.roomoffset = (3, 7)
         self.roomcon = {1: 35, 2: 55, 3: 10}
         self.hallsize = (1, 3)
+        self.width = 200
+        self.height = 200
         self.maxdepth = 5
         self.usedtiles = []
         self.rooms = []
 
-    def create(self, seed, maxdepth=5):
+    def create(self, seed, maxdepth=4):
         random.seed(seed)
         self.maxdepth = maxdepth
         self.usedtiles = []
         self.rooms = []
-        centerroom = _room(3, 5, 5, (0, 0))
+        centerroom = _room(3, 5, 5, (int(self.width / 2),
+                                     int(self.height / 2)))
         self.rooms.append(centerroom)
         self._set_used_tiles(centerroom)
         ring = [centerroom]
         self._process_ring(ring, 0)
-        NY = 0
-        SY = 0
-        EX = 0
-        WX = 0
+        newmap = Map(self.width, self.height, seed)
+        tilearray = [[False for y in range(self.height)]
+                     for x in range(self.width)]
         for room in self.rooms:
-            if room.Y < NY:
-                NY = room.Y
-            if room.Y > SY:
-                SY = room.Y
-            if room.X > EX:
-                EX = room.X
-            if room.X < WX:
-                WX = room.X
-        width = int(math.hypot(EX - WX, 0)) + self.roomsize[1] * 2
-        height = int(math.hypot(0, SY - NY)) + self.roomsize[1] * 2
-        newmap = Map(width, height, seed)
-        tilearray = [[False for y in range(height)] for x in range(width)]
-        for room in self.rooms:
-            cx = room.Center[0] + self.roomsize[1] - WX
-            cy = room.Center[1] + self.roomsize[1] - NY
-            room.Center = (cx, cy)
             for y in range(room.H):
                 for x in range(room.W):
-                    tilex = x - int(room.H / 2)
-                    tiley = y - int(room.Y / 2)
+                    tilex = x - int(room.W / 2) + room.Center[0]
+                    tiley = y - int(room.H / 2) + room.Center[1]
                     tilearray[tilex][tiley] = Tile(tilex, tiley, 'Stone Floor',
                                                    '.', True, True)
-        for y in range(height):
-            for x in range(width):
+        for y in range(self.height):
+            for x in range(self.width):
                 if not tilearray[x][y]:
                     tilearray[x][y] = Tile(x, y, 'Stone Wall',
                                            '#', False, False)
