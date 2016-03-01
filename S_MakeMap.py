@@ -40,16 +40,19 @@ class MapGen:
                 EX = room.X
             if room.X < WX:
                 WX = room.X
-        width = int(math.hypot(EX - WX, 0))
-        height = int(math.hypot(0, SY - NY))
+        width = int(math.hypot(EX - WX, 0)) + self.roomsize[1] * 2
+        height = int(math.hypot(0, SY - NY)) + self.roomsize[1] * 2
         newmap = Map(width, height, seed)
-        tilearray = [[False for x in range(width)] for y in range(height)]
+        tilearray = [[False for y in range(height)] for x in range(width)]
         for room in self.rooms:
+            cx = room.Center[0] + self.roomsize[1] - WX
+            cy = room.Center[1] + self.roomsize[1] - NY
+            room.Center = (cx, cy)
             for y in range(room.H):
                 for x in range(room.W):
                     tilex = x - int(room.H / 2)
                     tiley = y - int(room.Y / 2)
-                    tilearray[tilex][tiley] = Tile(x, y, 'Stone Floor',
+                    tilearray[tilex][tiley] = Tile(tilex, tiley, 'Stone Floor',
                                                    '.', True, True)
         for y in range(height):
             for x in range(width):
@@ -66,7 +69,7 @@ class MapGen:
         return newmapid
 
     def _process_ring(self, ring, depth):
-        print('starting depth ' + str(depth))
+        print('starting depth ' + str(depth) + ' ring len ' + str(len(ring)))
         newring = []
         while ring:
             for room in ring:
@@ -78,13 +81,7 @@ class MapGen:
                                         self.roomsize[1])
                 offset = random.randint(self.roomoffset[0],
                                         self.roomoffset[1])
-                temp = random.randint(1, 100)
-                if temp <= self.roomcon[1]:
-                    ctm = 1
-                elif temp <= self.roomcon[2]:
-                    ctm = 2
-                else:
-                    ctm = 3
+                ctm = random.choice([1, 2, 2, 2, 2, 2, 3, 3, 3, 3])
                 while rdirlst:
                     direction = rdirlst.pop()
                     no_intersection = True
@@ -101,9 +98,10 @@ class MapGen:
                         offx = -1 * (offset + int(width / 2) + int(room.W / 2))
                     for y in range(height):
                         for x in range(width):
-                            center = (x + offx, y + offy)
-                            if center in self.usedtiles:
+                            c = (x + offx, y + offy)
+                            if c in self.usedtiles:
                                 no_intersection = False
+                    center = (room.X + offx, room.Y + offy)
                     if no_intersection:
                         cx = int(math.hypot(center[0] - room.X, 0))
                         cy = int(math.hypot(0, center[1] - room.Y))
@@ -120,7 +118,7 @@ class MapGen:
                         self.rooms.append(newroom)
                         newring.append(newroom)
                         break
-                    room.connectionstomake -= 1
+                room.connectionstomake -= 1
                 if room.connectionstomake <= 0:
                     ring.remove(room)
         if depth < self.maxdepth:
@@ -150,3 +148,8 @@ class _room:
     @property
     def Y(self):
         return self.Center[1]
+
+    @property
+    def print_full(self):
+        return ('CTM:' + str(self.connectionstomake) + ' W:' + str(self.W) +
+                ' H:' + str(self.H) + ' Center:' + str(self.Center))
