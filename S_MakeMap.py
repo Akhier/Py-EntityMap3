@@ -115,11 +115,12 @@ class MapGen:
                             hallC = (int((room.X + center[0]) / 2), room.Y)
                             newhall = _room(0, centerdist[0], 1, hallC)
                         self.rooms.append(newhall)
-                        room.connectionstomake -= 1
                         newroom = _room(ctm, width, height, center)
                         self._set_used_tiles(newroom)
                         self.rooms.append(newroom)
                         newring.append(newroom)
+                        break
+                    room.connectionstomake -= 1
                 if room.connectionstomake <= 0:
                     ring.remove(room)
         if depth < self.maxdepth:
