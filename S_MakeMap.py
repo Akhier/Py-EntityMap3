@@ -4,6 +4,7 @@ from C_Tile import Tile
 from C_Map import Map
 import random
 import math
+import png
 
 
 class MapGen:
@@ -16,6 +17,48 @@ class MapGen:
         self.maxdepth = 4
         self.usedtiles = []
         self.rooms = []
+        self.debug = False
+        self.ccR = 0
+        self.ccG = 255
+        self.ccB = 255
+        self.currentcolor = 0
+        self.currentpng = 0
+
+    def color_change(self):
+        if self.currentcolor == 0:
+            if self.ccR != 0:
+                self.ccR = self.ccR - 15
+            else:
+                if self.ccB != 255:
+                    self.ccB = self.ccB + 15
+                    if self.ccB == 255:
+                        self.currentcolor = 1
+
+                else:
+                    self.currentcolor = 1
+
+        elif self.currentcolor == 1:
+            if self.ccG != 0:
+                self.ccG = self.ccG - 15
+            else:
+                if self.ccR != 255:
+                    self.ccR = self.ccR + 15
+                    if self.ccR == 255:
+                        self.currentcolor = 2
+                else:
+                    self.currentcolor = 2
+
+        elif self.currentcolor == 2:
+            if self.ccB != 0:
+                self.ccB = self.ccB - 15
+            else:
+                if self.ccG != 255:
+                    self.ccG = self.ccG + 15
+                    if self.ccG == 255:
+                        self.currentcolor = 0
+
+                else:
+                    self.currentcolor = 0
 
     def create(self, seed, maxdepth=3):
         random.seed(seed)
@@ -27,6 +70,45 @@ class MapGen:
         self.rooms.append(centerroom)
         self._set_used_tiles(centerroom)
         ring = [centerroom]
+        if self.debug:
+            coords = {}
+            for value in centerroom.Tiles:
+                coords[value] = True
+            with open('PNGoutput/' + format(self.currentpng, '04d') +
+                      '.png', 'wb') as f:
+                w = png.Writer(self.width, self.height, alpha=True)
+                templist = []
+                for y in range(self.height):
+                    innerlist = []
+                    for x in range(self.width):
+                        innerlist.append(0)
+                        innerlist.append(0)
+                        innerlist.append(0)
+                        innerlist.append(255)
+                    templist.append(innerlist)
+                w.write(f, templist)
+            self.currentpng = self.currentpng + 1
+            with open('PNGoutput/' + format(self.currentpng, '04d') +
+                      '.png', 'wb') as f:
+                w = png.Writer(self.width, self.height, alpha=True)
+                templist = []
+                for y in range(self.height):
+                    innerlist = []
+                    for x in range(self.width):
+                        if (x, y) in coords:
+                            innerlist.append(self.ccR)
+                            innerlist.append(self.ccG)
+                            innerlist.append(self.ccB)
+                            innerlist.append(255)
+                        else:
+                            innerlist.append(0)
+                            innerlist.append(0)
+                            innerlist.append(0)
+                            innerlist.append(0)
+                    templist.append(innerlist)
+                w.write(f, templist)
+            self.color_change()
+            self.currentpng = self.currentpng + 1
         self._process_ring(ring, 0)
         newmap = Map(self.width, self.height, seed)
         tilearray = [[False for y in range(self.height)]
@@ -100,6 +182,59 @@ class MapGen:
                         self._set_used_tiles(newhall)
                         self.rooms.append(newroom)
                         newring.append(newroom)
+                        if self.debug:
+                            coords = {}
+                            for value in newhall.Tiles:
+                                coords[value] = True
+                            with open('PNGoutput/' +
+                                      format(self.currentpng, '04d') +
+                                      '.png', 'wb') as f:
+                                w = png.Writer(self.width, self.height,
+                                               alpha=True)
+                                templist = []
+                                for y in range(self.height):
+                                    innerlist = []
+                                    for x in range(self.width):
+                                        if (x, y) in coords:
+                                            innerlist.append(self.ccR)
+                                            innerlist.append(self.ccG)
+                                            innerlist.append(self.ccB)
+                                            innerlist.append(255)
+                                        else:
+                                            innerlist.append(0)
+                                            innerlist.append(0)
+                                            innerlist.append(0)
+                                            innerlist.append(0)
+                                    templist.append(innerlist)
+                                w.write(f, templist)
+                            self.color_change()
+                            self.currentpng = self.currentpng + 1
+                            coords = {}
+                            for value in newroom.Tiles:
+                                coords[value] = True
+                            with open('PNGoutput/' +
+                                      format(self.currentpng, '04d') +
+                                      '.png', 'wb') as f:
+                                w = png.Writer(self.width, self.height,
+                                               alpha=True)
+                                templist = []
+                                for y in range(self.height):
+                                    innerlist = []
+                                    for x in range(self.width):
+                                        if (x, y) in coords:
+                                            innerlist.append(self.ccR)
+                                            innerlist.append(self.ccG)
+                                            innerlist.append(self.ccB)
+                                            innerlist.append(255)
+                                        else:
+                                            innerlist.append(0)
+                                            innerlist.append(0)
+                                            innerlist.append(0)
+                                            innerlist.append(0)
+                                    templist.append(innerlist)
+                                w.write(f, templist)
+                            self.color_change()
+                            self.currentpng = self.currentpng + 1
                         break
                 room.connectionstomake -= 1
                 if room.connectionstomake <= 0:
