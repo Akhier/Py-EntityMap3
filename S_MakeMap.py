@@ -11,7 +11,7 @@ class MapGen:
 
     def __init__(self):
         self.roomsize = (3, 7)
-        self.roomoffset = (1, 5)
+        self.roomoffset = (2, 5)
         self.width = 60
         self.height = 60
         self.maxdepth = 4
@@ -158,7 +158,8 @@ class MapGen:
                     elif direction == 'E':
                         offx = offset + int(width / 2) + int(room.W / 2)
                     elif direction == 'W':
-                        offx = -1 * (offset + int(width / 2) + int(room.W / 2))
+                        offx = -1 * (offset + int(width / 2) +
+                                     int(room.W / 2))
                     center = (room.X + offx, room.Y + offy)
                     newroom = _room(3, width, height, center)
                     for tile in newroom.Tiles:
@@ -244,8 +245,8 @@ class MapGen:
             self._process_ring(newring, depth)
 
     def _set_used_tiles(self, room):
-        temproom = _room(0, room.W, room.H, room.Center)
-        if random.randint(0, 3):
+        temproom = _room(0, room.W + 2, room.H + 2, room.Center)
+        if random.randint(0, 1):
             self.usedtiles.extend(temproom.Tiles)
         else:
             self.usedtiles.extend(room.Tiles)
