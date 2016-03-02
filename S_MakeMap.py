@@ -33,10 +33,8 @@ class MapGen:
                     self.ccB = self.ccB + 15
                     if self.ccB == 255:
                         self.currentcolor = 1
-
                 else:
                     self.currentcolor = 1
-
         elif self.currentcolor == 1:
             if self.ccG != 0:
                 self.ccG = self.ccG - 15
@@ -47,7 +45,6 @@ class MapGen:
                         self.currentcolor = 2
                 else:
                     self.currentcolor = 2
-
         elif self.currentcolor == 2:
             if self.ccB != 0:
                 self.ccB = self.ccB - 15
@@ -56,7 +53,6 @@ class MapGen:
                     self.ccG = self.ccG + 15
                     if self.ccG == 255:
                         self.currentcolor = 0
-
                 else:
                     self.currentcolor = 0
 
@@ -115,14 +111,12 @@ class MapGen:
                      for x in range(self.width)]
         for room in self.rooms:
             for tile in room.Tiles:
-                tilearray[tile[0]][tile[1]] = Tile(tile[0], tile[1],
-                                                   'Stone Floor', '.',
+                tilearray[tile[0]][tile[1]] = Tile('Stone Floor', '.',
                                                    True, True)
         for y in range(self.height):
             for x in range(self.width):
                 if not tilearray[x][y]:
-                    tilearray[x][y] = Tile(x, y, 'Stone Wall',
-                                           '#', False, False)
+                    tilearray[x][y] = Tile('Stone Wall', '#', False, False)
                 newtileid = EntityManager.new_Id()
                 ComponentManager.add_Component(newtileid, 'Tile',
                                                tilearray[x][y])
@@ -272,8 +266,3 @@ class _room:
     @property
     def Y(self):
         return self.Center[1]
-
-    @property
-    def print_full(self):
-        return ('CTM:' + str(self.connectionstomake) + ' W:' + str(self.W) +
-                ' H:' + str(self.H) + ' Center:' + str(self.Center))
