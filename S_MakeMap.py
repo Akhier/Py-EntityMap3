@@ -1,4 +1,5 @@
 from ComponentManager import ComponentManager
+from S_BresenhamLineAlgo import get_line
 from EntityManager import EntityManager
 from C_Tile import Tile
 from C_Map import Map
@@ -61,7 +62,7 @@ class MapGen:
         self.maxdepth = maxdepth
         self.usedtiles = []
         self.rooms = []
-        centerroom = _room(3, 5, 5, (int(self.width / 2),
+        centerroom = _room(4, 5, 5, (int(self.width / 2),
                                      int(self.height / 2)))
         self.rooms.append(centerroom)
         self._set_used_tiles(centerroom)
@@ -237,6 +238,62 @@ class MapGen:
         if depth < self.maxdepth:
             depth += 1
             self._process_ring(newring, depth)
+        else:
+            self._clean_up_last_ring(newring)
+
+    def _clean_up_last_ring(self, ring):
+        print('starting clean up of last ring')
+        while ring:
+            random.shuffle(ring)
+            currentroom = ring.pop()
+            shortestdist = 20
+            closestroom = False
+            for room in ring:
+                dist = math.hypot(room.X - currentroom.X,
+                                  room.Y - currentroom.Y)
+                if dist < shortestdist:
+                    shortestdist = dist
+                    closestroom = room
+            if closestroom:
+                xdist = math.hypot(currentroom.X - closestroom.X, 0)
+                ydist = math.hypot(0, currentroom.Y - closestroom.Y)
+                hall = get_line(currentroom.Center, closestroom.Center)
+                if xdist > ydist:
+                    hall.extend(get_line((currentroom.X + 1, currentroom.Y),
+                                         (closestroom.X + 1, closestroom.Y)))
+                else:
+                    hall.extend(get_line((currentroom.X, currentroom.Y + 1),
+                                         (closestroom.X, closestroom.Y + 1)))
+                newhall = _room(0, 1, 1, (0, 0))
+                newhall.Tiles = hall
+                self.rooms.append(newhall)
+                if self.debug:
+                    coords = {}
+                    for value in newhall.Tiles:
+                        coords[value] = True
+                    with open('PNGoutput/' +
+                              format(self.currentpng, '04d') +
+                              '.png', 'wb') as f:
+                        w = png.Writer(self.width, self.height,
+                                       alpha=True)
+                        templist = []
+                        for y in range(self.height):
+                            innerlist = []
+                            for x in range(self.width):
+                                if (x, y) in coords:
+                                    innerlist.append(self.ccR)
+                                    innerlist.append(self.ccG)
+                                    innerlist.append(self.ccB)
+                                    innerlist.append(255)
+                                else:
+                                    innerlist.append(0)
+                                    innerlist.append(0)
+                                    innerlist.append(0)
+                                    innerlist.append(0)
+                            templist.append(innerlist)
+                        w.write(f, templist)
+                    self.color_change()
+                    self.currentpng = self.currentpng + 1
 
     def _set_used_tiles(self, room):
         temproom = _room(0, room.W + 2, room.H + 2, room.Center)
